@@ -15,7 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('store.urls', namespace='store')),
+    path('__debug__/', include('debug_toolbar.urls')), # Only `debug_toolbar` specific settings
 ]
+
+# By adding this line of code to the urlpatterns list, Django will be able to serve media files when they are requested during development. However, this code should not be used in a production environment, where a separate server or CDN should be used to serve media files.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

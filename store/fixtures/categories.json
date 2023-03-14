@@ -1,0 +1,58 @@
+[
+{
+  "model": "store.category",
+  "pk": 1,
+  "fields": {
+    "name": "Django",
+    "slug": "django"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 2,
+  "fields": {
+    "name": "React",
+    "slug": "react"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 3,
+  "fields": {
+    "name": "Angular",
+    "slug": "angular"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 4,
+  "fields": {
+    "name": "Flusk",
+    "slug": "flusk"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 5,
+  "fields": {
+    "name": "FastAPI",
+    "slug": "fastapi"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 6,
+  "fields": {
+    "name": "Animal",
+    "slug": "animal"
+  }
+},
+{
+    "model": "store.category",
+    "pk": 7,
+    "fields": {
+        "name": "Unknown",
+        "slug": "unknown"
+    }
+}
+]
