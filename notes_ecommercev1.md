@@ -334,7 +334,10 @@
     app_name = 'basket'
 
     urlpatterns = [
-        path('', views.basket_summary, name='basket_summary')
+        path('', views.basket_summary, name='basket_summary'),
+        path('add/', views.basket_add, name='basket_add'),
+        path('delete/', views.basket_delete, name='basket_delete'),
+        path('update/', views.basket_update, name='basket_update')
     ]
     ```
 
@@ -348,16 +351,28 @@
 
     class Basket():
         def __init__(self, request):
-            ...
+            pass
 
         def add(self, product, qty):
-            ...
+            pass
 
         def __iter__(self):
-            ...
+            pass
+
+        def __len__(self):
+            pass
 
         def save(salf):
-            ...
+            pass
+
+        def update(self, product, qty):
+            pass
+
+        def delete(self, product):
+            pass
+
+        def get_total_price(self):
+            pass
     ```
 
 5.  Create and register a context processor:
@@ -385,7 +400,7 @@
     ]
     ```
 
-6.  Create a view for the app
+6.  Create the viewes for the app
 
     ```python
     # basket/views.py
@@ -395,37 +410,45 @@
     from .basket import Basket
 
     def basket_summary(request):
-        basket = Basket(request)
-        return render(request, 'basket/summary.html', {'basket': basket})
+        pass
+
+    def basket_add(request):
+        pass
+
+    def basket_delete(request):
+        pass
+
+    def basket_update(request):
+        pass
     ```
 
-7.  Create the template (`basket/summary.html`)
+7.  Create the template (`templates/basket/summary.html`)
 
     ```html
-    {% for item in basket %} {% with product=item.product %} ... {% endwith%} {%
-    endfor %}
+    <!-- templates/basket/summary.html -->
+
+    ...
+
+    <script>
+        $(document).on("click", ".delete-button", function (e) {
+            ...
+        });
+
+        $(document).on("click", ".update-button", function (e) {
+            ...
+        });
+    </script>
     ```
 
-8.  update `store.products.single.html`
+8.  update `templates/store/products/single.html`
 
     ```html
+    <!-- templates/store/products/single.html -->
+    ...
+
     <script>
         $(document).on("click", "#add-button", function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: "POST",
-                url: '{% url "basket:basket_add" %}',
-                data: {
-                    productid: $("#add-button").val(),
-                    productqty: $("#select option:selected").text(),
-                    csrfmiddlewaretoken: "{{csrf_token}}",
-                    action: "post",
-                },
-                success: function (json) {
-                    document.getElementById("basket-qty").innerHTML = json.qty;
-                },
-                error: function (xhr, errmsg, err) {},
-            });
+            ...
         });
     </script>
     ```
