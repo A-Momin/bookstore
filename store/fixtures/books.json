@@ -9,7 +9,7 @@
     "author": "admin",
     "description": "",
     "image": "images/Pro_Django.jpeg",
-    "slug": "pro-djangojpeg",
+    "slug": "pro-django",
     "price": "19.99",
     "in_stock": true,
     "is_active": true,
@@ -129,7 +129,7 @@
   "model": "store.product",
   "pk": 29,
   "fields": {
-    "category": 4,
+    "category": 5,
     "created_by": 1,
     "title": "FastAPI",
     "author": "admin",
@@ -147,7 +147,7 @@
   "model": "store.product",
   "pk": 30,
   "fields": {
-    "category": 4,
+    "category": 5,
     "created_by": 1,
     "title": "Learning FastAPI",
     "author": "admin",

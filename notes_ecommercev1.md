@@ -44,9 +44,9 @@
         - `makemigrations` command create a file under `app_name/migrations/` with the database structure to create
     - `$ python manage.py migrate`
         - `migrate`: The migrate command takes all the migrations that haven’t been applied (Django tracks which ones are applied using a special table in your database called django_migrations) and runs them against your database - essentially, synchronizing the changes you made to your models with the schema in the database.
-    - Observations on Database:
-        -
-        -
+    - Observations on Database
+        - The data is stored in the database.
+        - the `db.sqlite3` file is created.
 
 10. Create a superuser:
 
@@ -257,8 +257,8 @@
 
         - `migrate`: The migrate command takes all the migrations that haven’t been applied (Django tracks which ones are applied using a special table in your database called django_migrations) and runs them against your database - essentially, synchronizing the changes you made to your models with the schema in the database.
 
-    - Observations on Database:
-        -
+    - Observations on Database
+        - Data is migrated into the database.
         -
 
 11. Create `Fixtures` and upload data into your app.
@@ -285,3 +285,147 @@
         ```
 
 13. [How to install Django Debugger Tool](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#installation)
+
+---
+
+## Ecommerce Store (2021) - Part 1: Basket with session handling
+
+---
+
+### How to set up and use Session:
+
+![How session in Django works](/assets/django-session-steps.png)
+
+-   [How to use sessions](https://docs.djangoproject.com/en/4.1/topics/http/sessions/)
+
+1.  Create a new `basket` App.
+
+-   `$ python manage.py startapp basket` → Create a Django App by the name of `basket`
+
+2.  Register the `basket` app by appending it into `INSTALLED_APPS`.
+
+    ```python
+    # core/settings.py
+    INSTALLED_APPS = [
+        ...,
+        'basket',
+        ...,
+    ]
+    ```
+
+3.  Configure the urls for `basket` app
+
+    ```python
+    # core/urls.py
+    from django.conf import settings
+    from django.conf.urls.static import static
+
+    urlpatterns = [
+        ...,
+        path('basket/', include('basket.urls', namespace='basket')),
+    ]
+    ```
+
+    ```python
+    # basket/urls.py
+    from django.urls import path
+    from . import views
+
+    app_name = 'basket'
+
+    urlpatterns = [
+        path('', views.basket_summary, name='basket_summary')
+    ]
+    ```
+
+4.  Create `Basket` object:
+
+    ```python
+    # basket/basket.py
+    from decimal import Decimal
+    from store.models import Product
+
+
+    class Basket():
+        def __init__(self, request):
+            ...
+
+        def add(self, product, qty):
+            ...
+
+        def __iter__(self):
+            ...
+
+        def save(salf):
+            ...
+    ```
+
+5.  Create and register a context processor:
+
+    ```python
+    # basket/context_processors.py
+    from .basket import Basket
+
+    def basket(request):
+        return {'basket': Basket(request)}
+    ```
+
+    ```python
+    # core/settings.py
+    TEMPLATES = [
+        {
+            ...,
+            'OPTIONS': {
+                'context_processors': [
+                    ...,
+                    'basket.context_processors.basket'
+                ],
+            },
+        },
+    ]
+    ```
+
+6.  Create a view for the app
+
+    ```python
+    # basket/views.py
+    from django.http import JsonResponse
+    from django.shortcuts import get_object_or_404, render
+    from store.models import Product
+    from .basket import Basket
+
+    def basket_summary(request):
+        basket = Basket(request)
+        return render(request, 'basket/summary.html', {'basket': basket})
+    ```
+
+7.  Create the template (`basket/summary.html`)
+
+    ```html
+    {% for item in basket %} {% with product=item.product %} ... {% endwith%} {%
+    endfor %}
+    ```
+
+8.  update `store.products.single.html`
+
+    ```html
+    <script>
+        $(document).on("click", "#add-button", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: '{% url "basket:basket_add" %}',
+                data: {
+                    productid: $("#add-button").val(),
+                    productqty: $("#select option:selected").text(),
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: "post",
+                },
+                success: function (json) {
+                    document.getElementById("basket-qty").innerHTML = json.qty;
+                },
+                error: function (xhr, errmsg, err) {},
+            });
+        });
+    </script>
+    ```

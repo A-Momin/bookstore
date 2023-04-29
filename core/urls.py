@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls', namespace='store')),
     path('__debug__/', include('debug_toolbar.urls')), # Only `debug_toolbar` specific settings
+    path('basket/', include('basket.urls', namespace='basket')),
 ]
 
 # By adding this line of code to the urlpatterns list, Django will be able to serve media files when they are requested during development. However, this code should not be used in a production environment, where a separate server or CDN should be used to serve media files.
