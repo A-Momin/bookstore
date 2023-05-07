@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'store',
     'basket',
+    'account',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Basket session ID
 BASKET_SESSION_ID = 'basket'
+
+# Custom user model
+AUTH_USER_MODEL = 'account.UserBase'
+
+# Email setting
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGIN_REDIRECT_URL = '/account/dashboard'
+# LOGIN_URL = '/account/login/'

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 run(){
-    python manage.py runserver
+    python manage.py runserver localhost:${1:-8000}
 }
 
 createsuperuser(){
     : 'Create super users for your Django application using the DJANGO_SUPERUSER_<PARAMETER_NAME> environment veriables.'
 
-    # python manage.py createsuperuser --email A.Momin.NYC@gmail.com --username A.Momin.NYC --noinput
+    # python manage.py createsuperuser --email bbcredcap3@gmail.com --username bbcredcap3 --noinput
     python manage.py createsuperuser --noinput
 }
 
@@ -57,6 +57,14 @@ delete_migrations(){
     ## Note that the `-delete` option is a non-POSIX extension to find, so it may not be available on all systems. In that case, you can use the -exec option to run the rm command on each file:
     # find /path/to/directory -type f -name '*.txt' -exec rm {} \;
     find . -type f -name '*db.sqlite3' -delete
+}
+
+refresh_database(){
+    delete_migrations;
+    migrate_data;
+    python manage.py createsuperuser --email bbcredcap3@gmail.com --user_name bbcredcap3 --noinput;
+    loaddata categories.json;
+    loaddata books.json;
 }
 
 git_info(){
