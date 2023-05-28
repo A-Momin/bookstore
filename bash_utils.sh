@@ -8,7 +8,7 @@ createsuperuser(){
     : 'Create super users for your Django application using the DJANGO_SUPERUSER_<PARAMETER_NAME> environment veriables.'
 
     # python manage.py createsuperuser --email bbcredcap3@gmail.com --username bbcredcap3 --noinput
-    python manage.py createsuperuser --noinput
+    python manage.py createsuperuser --user_name bbcredcap3 --noinput
 }
 
 dumpdata(){
@@ -67,6 +67,10 @@ refresh_database(){
     loaddata books.json;
 }
 
+delete_user(){
+    python manage.py shell -c "from account.models import UserBase; UserBase.objects.filter(email='${1:-A.Momin.NYC@gmail.com}').delete()"
+}
+
 git_info(){
     echo "List of remote URLs:"
     git remote -v
@@ -74,5 +78,5 @@ git_info(){
     git config --get user.email
     git log --graph --oneline --decorate --all
     echo "List of branches created so far:"
-    git branch –a
+    git branch --list
 }

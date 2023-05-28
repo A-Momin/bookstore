@@ -59,11 +59,13 @@
         password: 1111
         email: a.momin.nyc@gmail.com
         ```
-    - Run the Database (db.sqlite3) file with SQLITE EXPLORER (a VSCode Tool)
+    - Open the Database (db.sqlite3) file with SQLITE EXPLORER (a VSCode Tool)
     - Observations:
         - The data is stored in the database.
 
-9. Checkout Django admin page at `localhost:8000/admin`
+9. Checkout Django admin page at `localhost:8000/admin/`
+    - Notes:
+        - Forgetting the "/" at the end of `localhost:8000/admin/` may cause error.
     - Observation:
         - The default login page is rendered.
     - Login using the super user credentials from the last step.
@@ -272,9 +274,9 @@
         - By running makemigrations, you’re telling Django that you’ve made some changes to your models and that you’d like the changes to be stored as a migration.
         - makemigrations Create a file under `app_name/migrations/` with the database structure to create
     - `$ python manage.py migrate`
+
         - `migrate`: The migrate command takes all the migrations that haven’t been applied (Django tracks which ones are applied using a special table in your database called django_migrations) and runs them against your database - essentially, synchronizing the changes you made to your models with the schema in the database.
-    - Observations:
-        - `db.sqlite3` file is created in the base directory.
+
         - Data is migrated into the database.
 
 12. Create `Fixtures` and upload data into your app.
@@ -475,7 +477,8 @@
 
 -   [Youtube](https://www.youtube.com/watch?v=ncsCnC3Ynlw&list=PLOLrQ9Pn6caxY4Q1U9RjO1bulQp5NDYS_&index=3&t=3956s)
 
-### Implement a registration system using a form build from scratch.
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">Implement a registration system using a form build from scratch.</summary>
 
 0. Start the `account` app.
 
@@ -620,7 +623,7 @@
 
 10. Set `EMAIL_BACKEND` parameter
 
-    - The EMAIL_BACKEND parameter is used to specify the email delivery backend that should be used by the application for sending emails.
+    - The `EMAIL_BACKEND` parameter is used to specify the email delivery backend that should be used by the application for sending emails.
     - By default, Django uses the SMTP backend, which is a simple email backend that sends email messages using the Simple Mail Transfer Protocol (SMTP). However, Django provides a variety of other email backends that can be used depending on your application's requirements.
     - For example, if you want to use the console backend for testing and development purposes, you can define the EMAIL_BACKEND setting like this:
 
@@ -643,8 +646,10 @@
         - `account/'activate/<slug:uidb64>/<slug:token>/'`
         -
 
-### Implement the login & logout system
+</details>
 
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">Implement the login & logout system</summary>
 0.  Create the login URL using built-in Classed-based views.
 
     ```python
@@ -713,10 +718,217 @@
 
 6.  Create the logout URL using built-in Classed-based views
 
-    ```python
+    ````python
     # account/urls.py
     urlpatterns = [
         ...
         path('logout/', auth_views.LogoutView.as_view(next_page='/account/login/'), name='logout'),
     ]
     ```
+    ````
+
+</details>
+
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to edit, and delete user account?</summary>
+
+0. Update `account/user/dashboard.html`
+1. Assign the dashboard url with the account button on base template (`template/store/base.html`)
+2. Create url for edit-details:
+
+    ```python
+    # account/urls.py
+    urlpatterns = [
+        ...
+        path('profile/edit/', views.edit_details, name='edit_details'),
+    ]
+    ```
+
+3. Create the model form for edit-details.
+
+    ```python
+    # account/forms.py
+    class UserEditForm(forms.ModelForm):
+        email = forms.EmailField(label='Account email (can not be changed)',max_length=200,widget=forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id': 'form-email', 'readonly': 'readonly'}))
+        user_name = forms.CharField(label='Firstname',min_length=4,max_length=50,widget=forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Username', 'id': 'form-firstname', 'readonly': 'readonly'}))
+        first_name = forms.CharField(label='Username',min_length=4,max_length=50,widget=forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Firstname', 'id': 'form-lastname'}))
+        ...
+    ```
+
+4. Define the view for edit-details.
+
+    ```python
+    # account/views.py
+    @login_required
+    def edit_details(request):
+        pass
+    ```
+
+5. Create `template/user/edit_details.html` template
+
+6. Attach `template/user/edit_details.html` with `Change Details` link into dashboard template (`template/account/user/dashboard.html`).
+
+7. Create url for delete-user
+
+    ```python
+    # account/urls.py
+    urlpatterns = [
+        ...
+        path('profile/delete_user/', views.delete_user, name='delete_user'),
+        path('profile/delete_confirm/', TemplateView.as_view(template_name="account/user/delete_confirm.html"), name='delete_confirmation'),
+    ]
+    ```
+
+8. Define the view for delete user.
+
+    ```python
+    # account/views.py
+    @login_required
+    def delete_user(request):
+        user = UserBase.objects.get(user_name=request.user)
+        user.is_active = False
+        user.save()
+        logout(request)
+        return redirect('account:delete_confirmation')
+    ```
+
+9. Update `template/user/edit_details.html` template.
+
+    - Assign the delete url to the delete form.
+
+        ```html
+        <!-- template/user/edit_details.html -->
+        ...
+
+        <form
+            class="account-form px-4"
+            action="{% url 'account:delete_user' %}"
+            method="post"
+        >
+            {% csrf_token %}
+            <p class=" h3 pt-4 font-weight-bold">Delete Account</p>
+            <p>Are you sure you want to delete your account?</p>
+            <button
+                type="submit"
+                role="button"
+                class="btn btn-danger btn-block py-2 mb-4 mt-5 fw-bold w-100"
+            >
+                Delete
+            </button>
+        </form>
+        ```
+
+    - Notes:
+        - How two forms from the same template can be submitted into two different routes.
+
+10. Create `account/user/delete_confirm.html` template.
+
+ </details>
+
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to reset user account?</summary>
+
+0. Create urls for password reset using class-based views
+
+    ```python
+    # account/urls.py
+    urlpatterns = [
+        ...
+        path(
+            'password_reset/',
+            auth_views.PasswordResetView.as_view(
+                template_name="account/user/password_reset_form.html",
+                success_url='password_reset_email_confirm',
+                email_template_name='account/user/password_reset_email.html',
+                form_class=PwdResetForm),
+            name='password_reset'
+        ),
+        path(
+            'password_reset/password_reset_email_confirm/',
+            TemplateView.as_view(template_name="account/user/reset_status.html"),
+            name='password_reset_done'),
+        path(
+            'password_reset_confirm/<uidb64>/<token>',
+            auth_views.PasswordResetConfirmView.as_view(
+                template_name='account/user/password_reset_confirm.html',
+                success_url='/account/password_reset_complete/',
+                form_class=PwdResetConfirmForm),
+            name="password_reset_confirm"
+        ),
+        path(
+            'password_reset_complete/',
+            TemplateView.as_view(template_name="account/user/reset_status.html"),
+            name='password_reset_complete'),
+    ]
+    ```
+
+1. Create the Model forms for resetting passwords.
+
+    ```py
+    # account/forms.py
+    class PwdResetForm(PasswordResetForm):
+
+        email = forms.EmailField(
+            max_length=254,
+            widget=forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Email', 'id': 'form-email'}))
+
+        def clean_email(self):
+            email = self.cleaned_data['email']
+            u = UserBase.objects.filter(email=email)
+            if not u:
+                raise forms.ValidationError(
+                    'Unfortunatley we can not find that email address')
+            return email
+
+
+    class PwdResetConfirmForm(SetPasswordForm):
+        new_password1 = forms.CharField(
+            label='New password',
+            widget=forms.PasswordInput(attrs={'class': 'form-control mb-3', 'placeholder': 'New Password', 'id': 'form-newpass'}))
+        new_password2 = forms.CharField(
+            label='Repeat password',
+            widget=forms.PasswordInput(attrs={'class': 'form-control mb-3', 'placeholder': 'New Password', 'id': 'form-new-pass2'}))
+
+    ```
+
+2. Create the password-reset-related templates.
+
+    - `templates/account/user/password_reset_confirm.html`
+    - `templates/account/user/password_reset_email.html`
+    - `templates/account/user/password_reset_form.html`
+    - `templates/account/user/password_reset_status.html`
+
+3. Update `template/account/user/login.html` template
+
+    - Add `Forgotten Password?` link to the login page.
+
+    ```html
+    <!-- template/account/user/login.html -->
+    ...
+    <p class="small text-center pt-4">
+        <a href="{% url "account:password_reset" %}">Forgotten Password?</a>
+    </p>
+    ```
+
+</details>
+
+## Deployment
+
+### How to run the project with Gunicorn server?
+
+-   `$ gunicorn core.wsgi:application --bind 0.0.0.0:8000`
+-   `$ gunicorn core.wsgi:application --config ./gunicorn_config.py`
+
+### How to run the project with uWSGI server?
+
+-   [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
+
+-   Testing uWSGI Server:
+    -   create a python script for testing (uwsgi_testing.py)
+    -   Deploy it on HTTP port 9090:
+        -   `$ uwsgi --http :9090 --wsgi-file uwsgi_testing.py`
+    -   Adding concurrency and monitoring
+        -   `$ uwsgi --http :9090 --wsgi-file foobar.py --master --processes 4 --threads 2`
+            -   This will spawn 4 processes (each with 2 threads), a master process (will respawn your processes when they die) and the HTTP router
+        -   `$ uwsgi --http :9090 --wsgi-file foobar.py --master --processes 4 --threads 2 --stats 127.0.0.1:9191`
+            -   One important task is monitoring. Understanding what is going on is vital in production deployment. The stats subsystem allows you to export uWSGI’s internal statistics as JSON

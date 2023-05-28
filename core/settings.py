@@ -26,7 +26,8 @@ SECRET_KEY = 'o2dc5%_gd^m!k5_ot75j-&)z%k9z%3i#-%p2jgfofqgi@$nldl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']
+
 
 # Only `debug_toolbar` specific settings
 INTERNAL_IPS = ['yourdomain.com', '127.0.0.1', 'localhost']
@@ -140,8 +141,11 @@ BASKET_SESSION_ID = 'basket'
 # Custom user model
 AUTH_USER_MODEL = 'account.UserBase'
 
-# Email setting
+# This parameter is used to specify the email delivery backend that should be used by the application for sending emails.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# This parameter is used to specify the URL where the user should be redirected after they have successfully logged in.
 LOGIN_REDIRECT_URL = '/account/dashboard'
-# LOGIN_URL = '/account/login/'
+
+# This parameter is used to specify the URL where the user should be redirected if they try to access a protected resource without being authenticated.
+LOGIN_URL = '/account/login/'
