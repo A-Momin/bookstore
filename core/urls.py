@@ -24,6 +24,7 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')), # Only `debug_toolbar` specific settings
     path('basket/', include('basket.urls', namespace='basket')),
     path('account/', include('account.urls', namespace='account')),
+    path('payment/', include('payment.urls', namespace='payment')),
     path('', include('store.urls', namespace='store')),
 ]
 

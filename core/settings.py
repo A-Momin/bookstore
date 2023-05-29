@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'store',
     'basket',
     'account',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -130,7 +131,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 # In addition to using a static/ directory inside your apps, you can define a list of directories (STATICFILES_DIRS) in your settings file where Django will also look for static files.
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -149,3 +150,5 @@ LOGIN_REDIRECT_URL = '/account/dashboard'
 
 # This parameter is used to specify the URL where the user should be redirected if they try to access a protected resource without being authenticated.
 LOGIN_URL = '/account/login/'
+
+STRIPE_SECRET_KEY = os.environ['STRIPE_SECRET_KEY']

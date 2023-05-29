@@ -2,7 +2,8 @@
 
 ---
 
-### How to start the most basic Django project?
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to start the most basic Django project?</summary>
 
 0. Create & activate the environment
 
@@ -71,7 +72,9 @@
     - Login using the super user credentials from the last step.
     - Logout clicking the `logout` button on the home admin page.
 
-### How to Create and Start a Django App?
+</details>
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to Create and Start a Django App?</summary>
 
 -   Notes:
 
@@ -304,13 +307,16 @@
 
 14. [How to install Django Debugger Tool](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#installation)
 
+</details>
+
 ---
 
 ## Ecommerce Store (2021) - Part 2: Basket with session handling
 
 ---
 
-### How to set up and use Session:
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to set up and use Session</summary>
 
 ![How session in Django works](/assets/django-session-steps.png)
 
@@ -460,16 +466,18 @@
 
 8.  update `templates/store/products/single.html`
 
-    ```html
-    <!-- templates/store/products/single.html -->
-    ...
+        ```html
+        <!-- templates/store/products/single.html -->
+        ...
 
-    <script>
-        $(document).on("click", "#add-button", function (e) {
-            ...
-        });
-    </script>
-    ```
+        <script>
+            $(document).on("click", "#add-button", function (e) {
+                ...
+            });
+        </script>
+        ```
+
+    </details>
 
 ## Ecommerce Store (2021) - Part 3: Build a user, payment and order management system
 
@@ -650,6 +658,7 @@
 
 <details>
 <summary style="font-size:18px;color:Orange;text-align:left">Implement the login & logout system</summary>
+
 0.  Create the login URL using built-in Classed-based views.
 
     ```python
@@ -912,14 +921,146 @@
 
 </details>
 
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">Cinfigure payment system with Stripe</summary>
+
+-   [Stripe: Accept a payment](https://stripe.com/docs/payments/accept-a-payment?platform=web&ui=elements)
+-   ![stripe-payment-process](/assets/stripe-payment-process.png)
+-   [install stripe-cli](https://stripe.com/docs/stripe-cli)
+    -   `$ brew install stripe/stripe-cli/stripe`
+
+1. Create and register the payment app.
+
+    - `$ python manage.py startapp payment`
+
+    ```python
+    # core/settings.py
+    INSTALLED_APPS = [
+    ...
+    'payment',
+    ]
+    ```
+
+2. Create the urls for the app
+
+    ```python
+    # core/urls.py
+    ...
+    path('payment/', include('payment.urls', namespace='payment')),
+    ...
+    ```
+
+    ```python
+    # payment/urls.py
+    from django.urls import path
+    from . import views
+
+    app_name = 'payment'
+
+    urlpatterns = [
+        path('', views.BasketView, name='basket'),
+        path('orderplaced/', views.order_placed, name='order_placed'),
+    ]
+    ```
+
+3. link the 'basket' url with busket-summary page.
+
+    ```html
+    <!-- /templates/basket/summary.html -->
+    ...
+
+    <a
+        role="button"
+        href="{% url 'payment:basket' %}"
+        class="btn btn-success fw-bold"
+        type="button"
+        >Checkout</a
+    >
+    ```
+
+4. Create Views for payment app.
+
+    ```python
+    # payment/views.py
+    @login_required
+    def BasketView(request):
+
+        basket = Basket(request)
+        total = str(basket.get_total_price())
+        total = total.replace('.', '')
+        total = int(total)
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        intent = stripe.PaymentIntent.create(
+            amount=total,
+            currency='gbp',
+            metadata={'userid': request.user.id}
+        )
+
+        return render(request, 'payment/home.html', {'client_secret': intent.client_secret})
+
+
+    def order_placed(request):
+        basket = Basket(request)
+        basket.clear()
+        return render(request, 'payment/orderplaced.html')
+    ```
+
+5. Implement the `clear()` method in 'Basket' object
+
+    ```python
+    # basket/basket.py
+    class Basket():
+    """
+    A base Basket class, providing some default behaviors that
+    can be inherited or overrided, as necessary.
+    """
+    def __init__(self, request):
+        self.session = request.session
+        basket = self.session.get(settings.BASKET_SESSION_ID)
+        if settings.BASKET_SESSION_ID not in request.session:
+            basket = self.session[settings.BASKET_SESSION_ID] = {}
+        self.basket = basket
+    ...
+
+    def clear(self):
+        # Remove basket from session
+        del self.session[settings.BASKET_SESSION_ID]
+        self.save()
+    ```
+
+6. Add new parameters into the settings file.
+
+    ```python
+    BASKET_SESSION_ID = 'basket'
+    STRIPE_SECRET_KEY = os.environ['STRIPE_SECRET_KEY']
+    ```
+
+7. Create the templates
+
+    - `templates/payment/home.html`
+    - `templates/payment/orderplaced.html`
+
+8. install stripe CLI
+    - `$ brew install stripe/stripe-cli/stripe`
+9. Login into your Stripe account and listen for stripe event using stripe cli
+    - `$ stripe login`
+    - `$ stripe listen`
+
+</details>
+
 ## Deployment
 
-### How to run the project with Gunicorn server?
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to run the project with Gunicorn server?</summary>
 
 -   `$ gunicorn core.wsgi:application --bind 0.0.0.0:8000`
 -   `$ gunicorn core.wsgi:application --config ./gunicorn_config.py`
 
-### How to run the project with uWSGI server?
+</details>
+
+<details>
+<summary style="font-size:18px;color:Orange;text-align:left">How to run the project with uWSGI server?</summary>
 
 -   [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
 
@@ -932,3 +1073,5 @@
             -   This will spawn 4 processes (each with 2 threads), a master process (will respawn your processes when they die) and the HTTP router
         -   `$ uwsgi --http :9090 --wsgi-file foobar.py --master --processes 4 --threads 2 --stats 127.0.0.1:9191`
             -   One important task is monitoring. Understanding what is going on is vital in production deployment. The stats subsystem allows you to export uWSGI’s internal statistics as JSON
+
+</details>
