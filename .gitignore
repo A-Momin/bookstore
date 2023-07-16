@@ -21,6 +21,7 @@ tst_*
 tmp
 *_initial.py
 **home.html
+.coverage
 .secrets*
 # =============================
 

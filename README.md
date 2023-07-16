@@ -8,3 +8,7 @@
 #### Alternative to `$ docker-compose down`
 
 -   `$ docker run -dit --rm --privileged -p 8010:8000 -v `pwd`:/bookstore -v /sys/fs/cgroup:/sys/fs/cgroup:ro --name=bs-cont bbcredcap3/harness:bs-img`
+
+### How to run test with 'coverage'?
+
+-   `$ coverage run --omit='*/.venv/*' manage.py test`
