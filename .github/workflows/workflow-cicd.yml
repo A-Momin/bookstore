@@ -1,0 +1,72 @@
+name: Django Docker Build and Deploy
+
+# Definiation of the events at which the workflow gets triggered
+on:
+  push: # push event
+    branches: [ master, cicd-wf, dockerization, bs-* ]
+  pull_request: # pull request event
+    branches: [ master, bs-* ]
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+  DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
+  IMAGE_TAG: 'bs-img'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+          coverage run --omit='*/.venv/*' manage.py test
+
+
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          CURRENT_DATETIME=$(date +"%Y-%m-%dT%H-%M")
+          echo "CURRENT_DATETIME=$CURRENT_DATETIME" >> $GITHUB_ENV
+
+      - name: Build and tag Docker image
+        # `github.sha` is a GitHub context expression that refers to the commit SHA of the current Git commit. It is used as part of the tag to ensure that each image has a unique identifier tied to a specific commit.
+        run: |
+          docker build -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_TAG }}_${{ env.CURRENT_DATETIME }} .
+
+
+      - name: Log in to Docker registry
+        run: echo "${{ env.DOCKERHUB_USERNAME }}" | docker login -u ${{ env.DOCKERHUB_USERNAME }} --password ${{ env.DOCKERHUB_PASSWORD }}
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_TAG }}_${{ env.CURRENT_DATETIME }}

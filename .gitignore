@@ -24,10 +24,3 @@ tmp
 .coverage
 .secrets*
 # =============================
-
-# ======================== Temporary Remove ========================== #
-.github
-# .dockerignore
-# Dockerfile
-# docker-compose.yml
-# entrypoint.sh
