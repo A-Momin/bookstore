@@ -1,0 +1,32 @@
+logs
+db.sqlite3
+**dotfiles/**
+**tmp/**
+notes.md
+notes_testing_django.md
+notes_misc.md
+*rough.md
+*notes.md
+python_utils.py
+gunicorn_config.py
+uwsgi_config.ini
+uwsgi_testing.py
+#=============================
+#=============================
+**/__pycache__/**
+**htmlcov/**
+.DS_Store
+tst_*
+.ipynb_checkpoints
+tmp
+*_initial.py
+**home.html
+.secrets*
+# =============================
+
+# ======================== Temporary Remove ========================== #
+.github
+# .dockerignore
+# Dockerfile
+# docker-compose.yml
+# entrypoint.sh

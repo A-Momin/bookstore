@@ -1,0 +1,4 @@
+-   Credit Card Number Provided by Stripe for Testing Payment:
+    -   `No Auth`: 4242424242424242
+    -   `Auth`: 4000002500003155
+    -   `Error`: 4000000000009995
