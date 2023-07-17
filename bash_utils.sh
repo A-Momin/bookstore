@@ -82,15 +82,6 @@ git_info(){
 }
 
 
-copy_utils(){
-    cp ./bash_utils.sh ./tmp/
-    cp ./notes_bookstore.md ./tmp/
-    cp ./notes_testing_django.md ./tmp/
-    cp ./notes_misc.md ./tmp/
-    cp ./stripe.md ./tmp/
-}
-
-
 add_github_secrets(){
     : ' Adds secrets to the Github
     '
