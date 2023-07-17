@@ -80,3 +80,24 @@ git_info(){
     echo "List of branches created so far:"
     git branch --list
 }
+
+
+copy_utils(){
+    cp ./bash_utils.sh ./tmp/
+    cp ./notes_bookstore.md ./tmp/
+    cp ./notes_testing_django.md ./tmp/
+    cp ./notes_misc.md ./tmp/
+    cp ./stripe.md ./tmp/
+}
+
+
+add_github_secrets(){
+    : ' Adds secrets to the Github
+    '
+    gh secret set DOCKERHUB_USERNAME --body ${DOCKERHUB_USERNAME}
+    gh secret set DOCKERHUB_PASSWORD --body ${DOCKERHUB_PASSWORD}
+    gh secret set DOCKER_REGISTRY --body ${DOCKER_REGISTRY}
+    gh secret set DOCKER_REPOSITORY --body ${DOCKER_REPOSITORY}
+    gh secret set STRIPE_SECRET_KEY --body ${STRIPE_SECRET_KEY}
+    gh secret set STRIPE_PUBLISHABLE_KEY --body ${STRIPE_PUBLISHABLE_KEY}
+}
