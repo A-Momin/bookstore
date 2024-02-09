@@ -15,9 +15,8 @@ RUN useradd -ms /bin/bash Shah && echo "Shah:1111" | chpasswd && adduser Shah su
 # gives the user `Shah` the ability to use sudo without a password prompt.
 RUN sed -i '$ a Shah ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
 
-USER Shah
-WORKDIR /home/Shah/
 
+USER Shah
 WORKDIR /bookstore
 
 # 'CMD' is executed from 'WORKDIR'
