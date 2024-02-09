@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-
+from PIL import Image
 
 class ProductManager(models.Manager):
     def get_queryset(self):
@@ -25,7 +25,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='product', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='product_creator', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='product_creator', on_delete=models.CASCADE)
 
     slug = models.SlugField(max_length=255)
 
@@ -51,3 +51,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self):
+        super().save()
+
+        img = Image.open(self.image.path)
+
+        output_size = (100, 100)
+        if img.height > output_size[0] or img.width > output_size[1]:
+            img.thumbnail(output_size)
+            img.save(self.image.path)

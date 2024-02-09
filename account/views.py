@@ -13,13 +13,13 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .forms import RegistrationForm, UserEditForm
 from .models import UserBase
 from .tokens import account_activation_token
+from orders.views import user_orders
 
 
 @login_required
 def dashboard(request):
-    # return HttpResponse('registered succesfully and activation sent')
-    # orders = user_orders(request)
-    return render(request, 'account/user/dashboard.html')
+    orders = user_orders(request)
+    return render(request, "account/user/dashboard.html", {"section": "profile", "orders": orders})
 
 
 def account_register(request):

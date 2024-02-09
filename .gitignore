@@ -1,7 +1,10 @@
+Jenkinsfile
 logs
 db.sqlite3
 **dotfiles/**
 **tmp/**
+**utils**
+**pvt**
 notes.md
 notes_testing_django.md
 notes_misc.md
@@ -11,6 +14,8 @@ python_utils.py
 gunicorn_config.py
 uwsgi_config.ini
 uwsgi_testing.py
+account/fixtures
+account/management
 #=============================
 #=============================
 **/__pycache__/**

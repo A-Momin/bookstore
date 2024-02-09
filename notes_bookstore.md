@@ -1,45 +1,42 @@
-## Ecommerce Store (2021) - Part 1: Building models, views and testing
+### Ecommerce Store (2021) - Part 1: Building models, views and testing
 
----
+<details><summary style="font-size:18px;color:Orange;text-align:left">How to start the most basic Django project?</summary>
 
-<details>
-<summary style="font-size:18px;color:Orange;text-align:left">How to start the most basic Django project?</summary>
-
-0. Create & activate the environment
+1. Create & activate the environment
 
     - `$ conda create -n django-env python=3.8 -y` → Create a environment with the given name, env_name
     - `$ cae django-env`
     - `$ pip install django` → install django in the activated conda environment.
     - `$ pip3 install -r requirements.txt` → Install the packages from 'requirment.txt' file if you have any.
 
-1. Make the Directory where Django project will be created
+2. Make the Directory where Django project will be created
 
     - `$ mkdir bookstore`
 
-2. `cd` into the newly created directory
+3. `cd` into the newly created directory
 
     - `$ cd bookstore`
 
-3. Create the Django project in the current Directory
+4. Create the Django project in the current Directory
 
     - `$ django-admin startproject core .`
 
-4. Run the Django Server:
+5. Run the Django Server:
 
     - `$ python manage.py runserver localhost:8000`
 
-5. Now checkout the `localhost:8000`
+6. Now checkout the `localhost:8000`
 
     - Observation:
         - The pre-built Django home page is rendered.
 
-6. How to stop the Django Server:
+7. How to stop the Django Server:
 
     - `$ ^ + c` #
     - `$ ps -ax | grep 'python manage.py runserver'` # Find the Django `runserver` process.
     - `$ kill <PID>` # to kill django `runserver` process by process ID.
 
-7. Migrate Data:
+8. Migrate Data:
 
     - `$ python manage.py makemigrations`
         - The `makemigrations` command looks at all your available models and creates migrations for whichever tables don’t already exist. `migrate` runs the migrations and creates tables in your database, as well as optionally providing much richer schema control.
@@ -51,7 +48,7 @@
         - the `db.sqlite3` file is created.
         - The data is stored in the database.
 
-8. Create a superuser:
+9. Create a superuser:
 
     - `$ python manage.py createsuperuser`→ Create admin user.
         ```yaml
@@ -64,7 +61,7 @@
     - Observations:
         - The data is stored in the database.
 
-9. Checkout Django admin page at `localhost:8000/admin/`
+10. Checkout Django admin page at `localhost:8000/admin/`
     - Notes:
         - Forgetting the "/" at the end of `localhost:8000/admin/` may cause error.
     - Observation:
@@ -127,7 +124,7 @@
         ...
         ```
 
-4. Create the `namespace` url for the `store` app.
+4. Update your root level URLConf including the url for the `store` app.
 
     ```python
     # core/urls.py
@@ -143,7 +140,7 @@
         urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
     ```
 
-5. Create the urls for the app
+5. Define the urls for the app
 
     ```python
     # store/urls.py
@@ -193,7 +190,7 @@
         ...
     ```
 
-8. Create and register Context Processor. [01:38:36]
+8. Create and Register a Context Processor Function. [01:38:36]
 
     ```python
     # store/context_processors.py
@@ -204,6 +201,8 @@
             'categories': Category.objects.all()
         }
     ```
+
+    - Register the Context Processor in Settings: Add the path to your context processor function to the context_processors option in the TEMPLATES setting.
 
     ```python
     # core/settings.py
@@ -220,7 +219,7 @@
     ]
     ```
 
-9. Register project templates.
+9. Configure TEMPLATES Setting.
 
     ```python
     # core/settings.py
@@ -311,16 +310,34 @@
 
 ---
 
-## Ecommerce Store (2021) - Part 2: Basket with session handling
+### Ecommerce Store (2021) - Part 2: Basket with session handling
 
----
+<details><summary style="font-size:18px;color:Orange;text-align:left">How to set up and use Session</summary>
 
-<details>
-<summary style="font-size:18px;color:Orange;text-align:left">How to set up and use Session</summary>
-
-![How session in Django works](/assets/django-session-steps.png)
+![How session in Django works](./assets/django-session-steps.png)
 
 -   [How to use sessions](https://docs.djangoproject.com/en/4.1/topics/http/sessions/)
+
+    -   Django provides full support for anonymous sessions. The session framework lets you store and retrieve arbitrary data on a per-site-visitor basis. It stores data on the server side and abstracts the sending and receiving of cookies. Cookies contain a session ID – not the data itself (unless you’re using the cookie based backend).
+
+    -   Enabling sessions
+
+        -   Sessions are implemented via a piece of middleware.
+
+    -   To enable session functionality, do the following:
+
+        -   Edit the MIDDLEWARE setting and make sure it contains `django.contrib.sessions.middleware.SessionMiddleware`. The default `settings.py` created by django-admin startproject has `SessionMiddleware` activated.
+        -   If you don’t want to use sessions, you might as well remove the SessionMiddleware line from MIDDLEWARE and `django.contrib.sessions` from your INSTALLED_APPS. It’ll save you a small bit of overhead.
+
+    -   Configuring the session engine
+
+        -   By default, Django stores sessions in your database (using the model `django.contrib.sessions.models.Session`). Though this is convenient, in some setups it’s faster to store session data elsewhere, so Django can be configured to store session data on your filesystem or in your cache.
+
+    -   Using database-backed sessions
+
+        -   If you want to use a database-backed session, you need to add 'django.contrib.sessions' to your INSTALLED_APPS setting.
+
+    -   Once you have configured your installation, run manage.py migrate to install the single database table that stores session data.
 
 1.  Create a new `basket` App.
 
@@ -337,7 +354,7 @@
     ]
     ```
 
-3.  Configure the urls for `basket` app
+3.  Add the `/basket` URL-namespcace into the urlpattern at the root level of URLConf.
 
     ```python
     # core/urls.py
@@ -466,44 +483,31 @@
 
 8.  update `templates/store/products/single.html`
 
-        ```html
-        <!-- templates/store/products/single.html -->
-        ...
+    ```html
+    <!-- templates/store/products/single.html -->
+    ...
 
-        <script>
-            $(document).on("click", "#add-button", function (e) {
-                ...
-            });
-        </script>
-        ```
+    <script>
+        $(document).on("click", "#add-button", function (e) {
+            ...
+        });
+    </script>
+    ```
 
     </details>
 
-## Ecommerce Store (2021) - Part 3: Build a user, payment and order management system
-
 ---
+
+### Ecommerce Store (2021) - Part 3: Build a user, payment and order management system
 
 -   [Youtube](https://www.youtube.com/watch?v=ncsCnC3Ynlw&list=PLOLrQ9Pn6caxY4Q1U9RjO1bulQp5NDYS_&index=3&t=3956s)
 
 <details>
 <summary style="font-size:18px;color:Orange;text-align:left">Implement a registration system using a form build from scratch.</summary>
 
-0. Start the `account` app.
+1. Start the `account` app.
 
     - `$ python manage.py startapp account`
-
-1. Register the app and add the `AUTH_USER_MODEL` parameter to the settings(`core/settings.py`).
-
-    ```python
-    # core/settings.py
-    INSTALLED_APPS = [
-    ...
-    'account',
-    ]
-    ...
-    AUTH_USER_MODEL = 'account.UserBase'
-    ...
-    ```
 
 2. Create custom user (UserBase) and custom manager (CustomAccountManager) model.
 
@@ -531,7 +535,7 @@
     admin.site.register(UserBase)
     ```
 
-4. Register the App and add an required parameter into `settings.py`.
+4. Register the app and add the `AUTH_USER_MODEL` parameter to the settings(`core/settings.py`).
 
     ```python
     # core/settings.py
@@ -580,37 +584,40 @@
     # account/forms.py
     class RegistrationForm(forms.ModelForm):
 
-    user_name = forms.CharField(label='Enter Username', min_length=4, max_length=50, help_text='Required')
-    email = forms.EmailField(max_length=100, help_text='Required', error_messages={'required': 'Sorry, you will need an email'})
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+        user_name = forms.CharField(label='Enter Username', min_length=4, max_length=50, help_text='Required')
+        email = forms.EmailField(max_length=100, help_text='Required', error_messages={'required': 'Sorry, you will need an email'})
+        password = forms.CharField(label='Password', widget=forms.PasswordInput)
+        password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
-    class Meta:
-        model = UserBase
-        fields = ('user_name', 'email',)
+        class Meta:
+            model = UserBase
+            fields = ('user_name', 'email',)
 
-    def clean_user_name(self):
-        pass
-    def clean_password2(self):
-        pass
-    def clean_email(self):
-        pass
+        def clean_user_name(self):
+            pass
+        def clean_password2(self):
+            pass
+        def clean_email(self):
+            pass
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['user_name'].widget.attrs.update({'class': 'form-control mb-3', 'placeholder': 'Username'})
-        self.fields['email'].widget.attrs.update({'class': 'form-control mb-3', 'placeholder': 'E-mail', 'name': 'email', 'id': 'id_email'})
-        self.fields['password'].widget.attrs.update({'class': 'form-control mb-3', 'placeholder': 'Password'})
-        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Repeat Password'})
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['user_name'].widget.attrs.update({'class': 'form-control mb-3', 'placeholder': 'Username'})
+            self.fields['email'].widget.attrs.update({'class': 'form-control mb-3', 'placeholder': 'E-mail', 'name': 'email', 'id': 'id_email'})
+            self.fields['password'].widget.attrs.update({'class': 'form-control mb-3', 'placeholder': 'Password'})
+            self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Repeat Password'})
     ```
 
 8. Create a Token object.
 
     ```python
     # account/token.py
+    from django.contrib.auth.tokens import PasswordResetTokenGenerator
+    from six import text_type
+
     class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
-    def _make_hash_value(self, user, timestamp):
-        pass
+        def _make_hash_value(self, user, timestamp):
+            pass
 
     account_activation_token = AccountActivationTokenGenerator()
     ```
@@ -648,7 +655,7 @@
     - create `templates/account/registration/account_activation_email.html`
     - create `templates/account/registration/activation_invalid.html`
 
-12. Test the registration routes:
+12. Test the `account/register/` routes:
     - Checkout:
         - `account/register/`
         - `account/'activate/<slug:uidb64>/<slug:token>/'`
@@ -921,13 +928,18 @@
 
 </details>
 
-<details>
-<summary style="font-size:18px;color:Orange;text-align:left">Cinfigure payment system with Stripe</summary>
+<details><summary style="font-size:18px;color:Orange;text-align:left">Cinfigure payment system with Stripe</summary>
 
 -   [Stripe: Accept a payment](https://stripe.com/docs/payments/accept-a-payment?platform=web&ui=elements)
--   ![stripe-payment-process](/assets/stripe-payment-process.png)
+-   ![stripe-payment-process](./assets/stripe-payment-process.png)
 -   [install stripe-cli](https://stripe.com/docs/stripe-cli)
+
     -   `$ brew install stripe/stripe-cli/stripe`
+
+-   Credit Card Number Provided by Stripe for Testing Payment:
+    -   No Auth: 4242424242424242
+    -   Auth: 4000002500003155
+    -   Error: 4000000000009995
 
 1. Create and register the payment app.
 
@@ -1041,37 +1053,294 @@
     - `templates/payment/home.html`
     - `templates/payment/orderplaced.html`
 
-8. install stripe CLI
-    - `$ brew install stripe/stripe-cli/stripe`
-9. Login into your Stripe account and listen for stripe event using stripe cli
-    - `$ stripe login`
-    - `$ stripe listen`
-
 </details>
 
-## Deployment
+<details open><summary style="font-size:18px;color:Orange;text-align:left">Configure Order App</summary>
 
-<details>
-<summary style="font-size:18px;color:Orange;text-align:left">How to run the project with Gunicorn server?</summary>
+-   Credit Card Number Provided by Stripe for Testing Payment:
 
--   `$ gunicorn core.wsgi:application --bind 0.0.0.0:8000`
--   `$ gunicorn core.wsgi:application --config ./gunicorn_config.py`
+    -   `No Auth`: 4242424242424242
+    -   `Auth`: 4000002500003155
+    -   `Error`: 4000000000009995
 
-</details>
+-   [Get started with the Stripe CLI](https://stripe.com/docs/stripe-cli)
 
-<details>
-<summary style="font-size:18px;color:Orange;text-align:left">How to run the project with uWSGI server?</summary>
+    -   `$ brew install stripe/stripe-cli/stripe`
 
--   [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
+-   Log into your Stripe account and listen for stripe event using stripe cli
 
--   Testing uWSGI Server:
-    -   create a python script for testing (uwsgi_testing.py)
-    -   Deploy it on HTTP port 9090:
-        -   `$ uwsgi --http :9090 --wsgi-file uwsgi_testing.py`
-    -   Adding concurrency and monitoring
-        -   `$ uwsgi --http :9090 --wsgi-file foobar.py --master --processes 4 --threads 2`
-            -   This will spawn 4 processes (each with 2 threads), a master process (will respawn your processes when they die) and the HTTP router
-        -   `$ uwsgi --http :9090 --wsgi-file foobar.py --master --processes 4 --threads 2 --stats 127.0.0.1:9191`
-            -   One important task is monitoring. Understanding what is going on is vital in production deployment. The stats subsystem allows you to export uWSGI’s internal statistics as JSON
+    -   `$ stripe login`
+    -   `$ stripe listen`
+    -   `$ stripe listen --forward-to localhost:8000/payment/webhook/`
+
+0.  Create and register the orders app.
+
+    -   `$ python manage.py startapp orders`
+
+    ```python
+    # core/settings.py
+    INSTALLED_APPS = [
+    ...
+    'orders',
+    ]
+    ```
+
+1.  Create the urls for the app
+
+    ```python
+    # core/urls.py
+    ...
+    path("orders/", include("orders.urls", namespace="orders")),
+    ...
+    ```
+
+2.  Create the Models for orders app.
+
+    ```python
+    # orders/models.py
+    class Order(models.Model):
+        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='order_user')
+        full_name = models.CharField(max_length=50)
+        address1 = models.CharField(max_length=250)
+        address2 = models.CharField(max_length=250)
+        city = models.CharField(max_length=100)
+        phone = models.CharField(max_length=100)
+        post_code = models.CharField(max_length=20)
+        created = models.DateTimeField(auto_now_add=True)
+        updated = models.DateTimeField(auto_now=True)
+        total_paid = models.DecimalField(max_digits=5, decimal_places=2)
+        order_key = models.CharField(max_length=200)
+        billing_status = models.BooleanField(default=False)
+
+        class Meta:
+            ordering = ('-created',)
+
+        def __str__(self):
+            return str(self.created)
+
+
+    class OrderItem(models.Model):
+        order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+        product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
+        price = models.DecimalField(max_digits=5, decimal_places=2)
+        quantity = models.PositiveIntegerField(default=1)
+
+        def __str__(self):
+            return str(self.id)
+    ```
+
+3.  Update the BasketView for payment app.
+
+    ```python
+    # payment/views.py
+    @login_required
+    def BasketView(request):
+
+        basket = Basket(request)
+        total = str(basket.get_total_price())
+        total = total.replace('.', '')
+        total = int(total)
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        intent = stripe.PaymentIntent.create(
+            amount=total,
+            currency='gbp',
+            metadata={'userid': request.user.id}
+        )
+
+        return render(request, 'payment/payment_form.html', {'client_secret': intent.client_secret, 'STRIPE_PUBLISHABLE_KEY': os.environ.get('STRIPE_PUBLISHABLE_KEY')})
+
+    ```
+
+4.  Update the `index.js` for payment app
+
+    ```js
+    var stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
+    ...
+
+    form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+
+        var custName = document.getElementById("custName").value;
+        var custAdd = document.getElementById("custAdd").value;
+        var custAdd2 = document.getElementById("custAdd2").value;
+        var postCode = document.getElementById("postCode").value;
+
+
+        $.ajax({
+            type: "POST",
+            url: 'http://127.0.0.1:8000/orders/add/',
+            data: {
+                order_key: clientsecret,
+                csrfmiddlewaretoken: CSRF_TOKEN,
+                action: "post",
+            },
+            success: function (json) {
+                console.log(json.success)
+
+                stripe.confirmCardPayment(clientsecret, {
+                    payment_method: {
+                        card: card,
+                        billing_details: {
+                            address: {
+                                line1: custAdd,
+                                line2: custAdd2
+                            },
+                            name: custName
+                        },
+                    }
+                }).then(function (result) {
+                    if (result.error) {
+                        console.log('payment error')
+                        console.log(result.error.message);
+                    } else {
+                        if (result.paymentIntent.status === 'succeeded') {
+                            console.log('payment processed')
+                            // There's a risk of the customer closing the window before callback
+                            // execution. Set up a webhook or plugin to listen for the
+                            // payment_intent.succeeded event that handles any business critical
+                            // post-payment actions.
+                            window.location.replace("http://127.0.0.1:8000/payment/orderplaced/");
+                        }
+                    }
+                });
+
+            },
+            error: function (xhr, errmsg, err) { },
+        });
+
+    });
+
+    ```
+
+5.  Create the Order URL:
+
+    ```python
+    # orders/urls.py
+    from django.urls import path
+    from . import views
+
+    app_name = 'orders'
+
+    urlpatterns = [
+        path('add/', views.add, name='add'),
+    ]
+    ```
+
+6.  Define the views for orders app.
+
+    ```python
+    # orders/views.py
+
+    def add(request):
+        basket = Basket(request)
+        if request.POST.get('action') == 'post':
+
+            order_key = request.POST.get('order_key')
+            user_id = request.user.id
+            baskettotal = basket.get_total_price()
+
+            # Check if order exists
+            if Order.objects.filter(order_key=order_key).exists():
+                pass
+            else:
+                order = Order.objects.create(user_id=user_id, full_name='name', address1='add1', address2='add2', total_paid=baskettotal, order_key=order_key)
+                order_id = order.pk
+
+                for item in basket:
+                    OrderItem.objects.create(order_id=order_id, product=item['product'], price=item['price'], quantity=item['qty'])
+
+            response = JsonResponse({'success': 'Return something'})
+            return response
+
+
+    def payment_confirmation(data):
+        Order.objects.filter(order_key=data).update(billing_status=True)
+
+
+    def user_orders(request):
+        user_id = request.user.id
+        orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
+        return orders
+    ```
+
+7.  Integrate stripe webhook for payment app.
+
+    ```python
+    # payment/views.py
+    # it listen the events sent from stripe.
+    # Run: `$ stripe listen --forward-to localhost:8000/payment/webhook/` to listen events.
+    @csrf_exempt
+    def stripe_webhook(request):
+        payload = request.body
+        event = None
+
+        try:
+            event = stripe.Event.construct_from(json.loads(payload), stripe.api_key)
+        except ValueError as e:
+            print(e)
+            return HttpResponse(status=400)
+
+        # Handle the event
+        if event.type == 'payment_intent.succeeded':
+            payment_confirmation(event.data.object.client_secret)
+
+        else:
+            print('Unhandled event type {}'.format(event.type))
+
+        return HttpResponse(status=200)
+
+    def order_placed(request):
+        ...
+    ```
+
+8.  Create the templates.
+
+    -   `templates/payment/sub_base.html`
+    -   `templates/payment/payment_form.html`
+
+9.  Update the dashboard view of account app.
+
+    ```python
+    # account/views.py
+    @login_required
+    def dashboard(request):
+        orders = user_orders(request)
+        return render(request, 'account/user/dashboard.html', {'section': 'profile', 'orders': orders})
+    ```
+
+10. Update the `account/user/dashboard.html` templates.
+
+11. Fix issues with total price in `basket.py`
+
+    ```python
+    # /basket/basket.py
+    class Basket():
+    """
+    A base Basket class, providing some default behaviors that
+    can be inherited or overrided, as necessary.
+    """
+        ...
+        def get_subtotal_price(self):
+            return sum(Decimal(item["price"]) * item["qty"] for item in self.basket.values())
+
+        def get_total_price(self):
+
+            subtotal = sum(Decimal(item["price"]) * item["qty"]
+                        for item in self.basket.values())
+
+            if subtotal == 0:
+                shipping = Decimal(0.00)
+            else:
+                shipping = Decimal(11.50)
+
+            total = subtotal + Decimal(shipping)
+            return total
+        ...
+    ```
+
+12. Redirect the stripe events to the given url.
+    -   `$ stripe listen --forward-to localhost:8000/payment/webhook/`
 
 </details>
