@@ -14,5 +14,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # - ./dotfiles/:/home/Shah/
     ports:
-      - 8000:8000 # maps the port number 8000 of docker host into port 8000 of container.
+      - 8010:8000 # maps the port number 8000 of docker host into port 8000 of container.
     # command: python manage.py runserver 0.0.0.0:8000
+

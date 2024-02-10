@@ -7,19 +7,19 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .forms import RegistrationForm, UserEditForm
 from .models import UserBase
 from .tokens import account_activation_token
+from orders.views import user_orders
 
 
 @login_required
 def dashboard(request):
-    # return HttpResponse('registered succesfully and activation sent')
-    # orders = user_orders(request)
-    return render(request, 'account/user/dashboard.html')
+    orders = user_orders(request)
+    return render(request, "account/user/dashboard.html", {"section": "profile", "orders": orders})
 
 
 def account_register(request):
@@ -52,7 +52,7 @@ def account_register(request):
 
 def account_activate(request, uidb64, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        uid = force_str(urlsafe_base64_decode(uidb64))
         user = UserBase.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, user.DoesNotExist):
         user = None

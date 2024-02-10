@@ -1,14 +1,14 @@
 #!/bin/bash
 
-run(){
+djrun(){
     python manage.py runserver localhost:${1:-8000}
 }
 
 createsuperuser(){
     : 'Create super users for your Django application using the DJANGO_SUPERUSER_<PARAMETER_NAME> environment veriables.'
 
-    # python manage.py createsuperuser --email bbcredcap3@gmail.com --username bbcredcap3 --noinput
-    python manage.py createsuperuser --user_name bbcredcap3 --noinput
+    python manage.py createsuperuser --email AMominNJ@gmail.com --user_name admin --noinput
+    # python manage.py createsuperuser --user_name admin --noinput
 }
 
 dumpdata(){
@@ -40,7 +40,7 @@ loaddata(){
     python manage.py loaddata $1
 }
 
-pythonshell(){
+djshell(){
     python manage.py shell
 }
 
@@ -62,7 +62,8 @@ delete_migrations(){
 refresh_database(){
     delete_migrations;
     migrate_data;
-    python manage.py createsuperuser --email bbcredcap3@gmail.com --user_name bbcredcap3 --noinput;
+    rm -fr /Users/am/mydocs/Software_Development/Web_Development/django-courses/bookstore/media/images/*
+    python manage.py createsuperuser --email AMominNJ@gmail.com --user_name admin --noinput;
     loaddata categories.json;
     loaddata books.json;
 }
@@ -91,4 +92,15 @@ add_github_secrets(){
     gh secret set DOCKER_REPOSITORY --body ${DOCKER_REPOSITORY}
     gh secret set STRIPE_SECRET_KEY --body ${STRIPE_SECRET_KEY}
     gh secret set STRIPE_PUBLISHABLE_KEY --body ${STRIPE_PUBLISHABLE_KEY}
+}
+
+remove_github_secrets(){
+    : ' Removes secrets to the Github
+    '
+    gh secret remove DOCKERHUB_USERNAME
+    gh secret remove DOCKERHUB_PASSWORD
+    gh secret remove DOCKER_REGISTRY
+    gh secret remove DOCKER_REPOSITORY
+    gh secret remove STRIPE_SECRET_KEY
+    gh secret remove STRIPE_PUBLISHABLE_KEY
 }
