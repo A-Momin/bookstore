@@ -31,3 +31,5 @@ testfixtures
 toml
 urllib3
 wrapt
+django-debug-toolbar
+
