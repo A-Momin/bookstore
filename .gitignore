@@ -1,4 +1,3 @@
-Jenkinsfile
 logs
 db.sqlite3
 **dotfiles/**
