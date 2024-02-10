@@ -10,7 +10,7 @@ fi
 source .venv/bin/activate
 
 
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt --no-cache-dir
 
 if [ -d "logs" ] 
 then
