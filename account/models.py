@@ -3,7 +3,8 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-
+from django.dispatch import Signal, receiver
+from django.db.models.signals import post_save
 
 class CustomAccountManager(BaseUserManager):
 
@@ -66,3 +67,10 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.user_name
+
+
+def on_user_create_handler(sender, instance, **kwargs):
+    print(f"The user with username- '{instance.user_name}' has just been created")
+    print("=========================="*3)
+
+post_save.connect(on_user_create_handler, sender=UserBase)

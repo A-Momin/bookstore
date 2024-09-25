@@ -52,8 +52,10 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self):
-        super().save()
+    ## Serving the media files from S3 bucket will raise some issues.
+    ## If you still wanna resize the image, you can use AWS Lambda service.
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
         img = Image.open(self.image.path)
 

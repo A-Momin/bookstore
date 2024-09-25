@@ -33,3 +33,5 @@ toml
 urllib3
 wrapt
 django-debug-toolbar
+boto3
+django-storages

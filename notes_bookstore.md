@@ -1,6 +1,67 @@
+# [Django E-Commarce - 1](https://www.youtube.com/playlist?list=PLOLrQ9Pn6caxY4Q1U9RjO1bulQp5NDYS_)
+
+<details><summary style="font-size:25px;color:Red">MISC</summary>
+
+-   [Django DRF Project | API Documentation with Swagger UI](https://www.youtube.com/watch?v=XBxssKYf5G0&list=PLOLrQ9Pn6cawinBJbH5d9IfloO9RRPMiq&index=26&t=38s)
+
+</details>
+
+---
+
+<details><summary style="font-size:25px;color:Red">Jenkins Pipeline Configurations</summary>
+
+#### Allow Jenkins User to Invoke Docker Command
+
+-   Run the following commands across all the Jenkins agents and remote servers
+
+    1.  `$ sudo usermod -aG docker jenkins` -> Add 'jenkins' user to 'docker' group
+    2.  `$ sudo systemctl restart jenkins`
+
+#### Required Jenkins Plugins
+
+-   Install following plugins in the Jenkins master.
+
+    1. CloudBees Docker Build and Publish Plugin
+    2. Docker Pipeline
+    3. SSH Agent Plugin
+
+#### Script Descriptions
+
+-   `JOB_NAME` --> The name you give at the job creation through Jenkins Web UI.
+
+#### Facilitate SSH access
+
+-   `$ ssh-keygen -f ~/.ssh/jenkins_master_to_slave -t rsa -P ""` -> Generate SSh key so that master can ssh into the slave
+-   `$ ssh -o StrictHostKeyChecking=no -i ~/.ssh/ht_aws.pem ubuntu@44.222.195.42 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/jenkins_master_to_slave.pub`
+    -   this command will connect to the remote server `___.___.___.___` as the ubuntu user using SSH, append the content of the `jenkins_master_to_slave.pub` file to the `authorized_keys` file in the `~/.ssh/` directory on the remote server, and bypass any host key checking prompts.
+
+<details><summary style="font-size:20px;color:magenta">Add a Permanent Agent step by step</summary>
+
+</details>
+
+<details><summary style="font-size:20px;color:magenta">Serving Static Files</summary>
+
+-   [django-storages docs](https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html)
+-   [Django Static Files in Production on DigitalOcean Spaces docs](https://www.codingforentrepreneurs.com/blog/django-static-files-digitalocean-spaces/)
+
+-   `$ python manage.py collectstatic --no-input`
+
+-   Needed packages
+    -   `$ pip install django-storages boto3`
+
+</details>
+
+<details><summary style="font-size:20px;color:magenta">Create a Pipeline step by step</summary>
+
+</details>
+
+</details>
+
+---
+
 ### Ecommerce Store (2021) - Part 1: Building models, views and testing
 
-<details><summary style="font-size:18px;color:Orange;text-align:left">How to start the most basic Django project?</summary>
+<details><summary style="font-size:18px;color:Orange">How to start the most basic Django project?</summary>
 
 1. Create & activate the environment
 
@@ -55,7 +116,7 @@
         # Created admin user with following credentials:
         username: a.momin
         password: 1111
-        email: a.momin.nyc@gmail.com
+        email: AMominNJ@gmail.com
         ```
     - Open the Database (db.sqlite3) file with SQLITE EXPLORER (a VSCode Tool)
     - Observations:
@@ -312,32 +373,20 @@
 
 ### Ecommerce Store (2021) - Part 2: Basket with session handling
 
-<details><summary style="font-size:18px;color:Orange;text-align:left">How to set up and use Session</summary>
+<details><summary style="font-size:18px;color:Orange">How to set up and use Session</summary>
 
 ![How session in Django works](./assets/django-session-steps.png)
 
 -   [How to use sessions](https://docs.djangoproject.com/en/4.1/topics/http/sessions/)
 
     -   Django provides full support for anonymous sessions. The session framework lets you store and retrieve arbitrary data on a per-site-visitor basis. It stores data on the server side and abstracts the sending and receiving of cookies. Cookies contain a session ID – not the data itself (unless you’re using the cookie based backend).
-
-    -   Enabling sessions
-
+    -   **Enabling session functionality**:
         -   Sessions are implemented via a piece of middleware.
-
-    -   To enable session functionality, do the following:
-
         -   Edit the MIDDLEWARE setting and make sure it contains `django.contrib.sessions.middleware.SessionMiddleware`. The default `settings.py` created by django-admin startproject has `SessionMiddleware` activated.
         -   If you don’t want to use sessions, you might as well remove the SessionMiddleware line from MIDDLEWARE and `django.contrib.sessions` from your INSTALLED_APPS. It’ll save you a small bit of overhead.
-
-    -   Configuring the session engine
-
-        -   By default, Django stores sessions in your database (using the model `django.contrib.sessions.models.Session`). Though this is convenient, in some setups it’s faster to store session data elsewhere, so Django can be configured to store session data on your filesystem or in your cache.
-
-    -   Using database-backed sessions
-
-        -   If you want to use a database-backed session, you need to add 'django.contrib.sessions' to your INSTALLED_APPS setting.
-
-    -   Once you have configured your installation, run manage.py migrate to install the single database table that stores session data.
+    -   **Configuring the session engine**: By default, Django stores sessions in your database (using the model `django.contrib.sessions.models.Session`). Though this is convenient, in some setups it’s faster to store session data elsewhere, so Django can be configured to store session data on your filesystem or in your cache.
+    -   **Using database-backed sessions**: If you want to use a database-backed session, you need to add `django.contrib.sessions` to your INSTALLED_APPS setting.
+    -   Once you have configured your installation, run `manage.py migrate` to install the single database table that stores session data.
 
 1.  Create a new `basket` App.
 
@@ -928,7 +977,7 @@
 
 </details>
 
-<details><summary style="font-size:18px;color:Orange;text-align:left">Cinfigure payment system with Stripe</summary>
+<details><summary style="font-size:18px;color:Orange">Cinfigure payment system with Stripe</summary>
 
 -   [Stripe: Accept a payment](https://stripe.com/docs/payments/accept-a-payment?platform=web&ui=elements)
 -   ![stripe-payment-process](./assets/stripe-payment-process.png)
@@ -1055,7 +1104,7 @@
 
 </details>
 
-<details open><summary style="font-size:18px;color:Orange;text-align:left">Configure Order App</summary>
+<details><summary style="font-size:18px;color:Orange;text-align:left">Configure Order App</summary>
 
 -   Credit Card Number Provided by Stripe for Testing Payment:
 
@@ -1073,7 +1122,7 @@
     -   `$ stripe listen`
     -   `$ stripe listen --forward-to localhost:8000/payment/webhook/`
 
-0.  Create and register the orders app.
+1.  Create and register the orders app.
 
     -   `$ python manage.py startapp orders`
 
@@ -1085,7 +1134,7 @@
     ]
     ```
 
-1.  Create the urls for the app
+2.  Create the urls for the app
 
     ```python
     # core/urls.py
@@ -1094,7 +1143,7 @@
     ...
     ```
 
-2.  Create the Models for orders app.
+3.  Create the Models for orders app.
 
     ```python
     # orders/models.py
@@ -1129,7 +1178,7 @@
             return str(self.id)
     ```
 
-3.  Update the BasketView for payment app.
+4.  Update the BasketView for payment app.
 
     ```python
     # payment/views.py
@@ -1152,7 +1201,7 @@
 
     ```
 
-4.  Update the `index.js` for payment app
+5.  Update the `index.js` for payment app
 
     ```js
     var stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
@@ -1214,7 +1263,7 @@
 
     ```
 
-5.  Create the Order URL:
+6.  Create the Order URL:
 
     ```python
     # orders/urls.py
@@ -1228,7 +1277,7 @@
     ]
     ```
 
-6.  Define the views for orders app.
+7.  Define the views for orders app.
 
     ```python
     # orders/views.py
@@ -1265,7 +1314,7 @@
         return orders
     ```
 
-7.  Integrate stripe webhook for payment app.
+8.  Integrate stripe webhook for payment app.
 
     ```python
     # payment/views.py
@@ -1295,12 +1344,12 @@
         ...
     ```
 
-8.  Create the templates.
+9.  Create the templates.
 
     -   `templates/payment/sub_base.html`
     -   `templates/payment/payment_form.html`
 
-9.  Update the dashboard view of account app.
+10. Update the dashboard view of account app.
 
     ```python
     # account/views.py
@@ -1310,9 +1359,9 @@
         return render(request, 'account/user/dashboard.html', {'section': 'profile', 'orders': orders})
     ```
 
-10. Update the `account/user/dashboard.html` templates.
+11. Update the `account/user/dashboard.html` templates.
 
-11. Fix issues with total price in `basket.py`
+12. Fix issues with total price in `basket.py`
 
     ```python
     # /basket/basket.py
@@ -1340,7 +1389,7 @@
         ...
     ```
 
-12. Redirect the stripe events to the given url.
+13. Redirect the stripe events to the given url.
     -   `$ stripe listen --forward-to localhost:8000/payment/webhook/`
 
 </details>

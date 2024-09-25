@@ -4,6 +4,7 @@ db.sqlite3
 **tmp/**
 **utils**
 **pvt**
+**media/images**
 notes.md
 notes_testing_django.md
 notes_misc.md
@@ -15,6 +16,8 @@ uwsgi_config.ini
 uwsgi_testing.py
 account/fixtures
 account/management
+store/management
+.venv
 #=============================
 #=============================
 **/__pycache__/**
@@ -27,4 +30,5 @@ tmp
 **home.html
 .coverage
 .secrets*
+.gitignore
 # =============================
