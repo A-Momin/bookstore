@@ -99,6 +99,7 @@
 
 8. Migrate Data:
 
+    - `$ python manage.py makemigrations --check`
     - `$ python manage.py makemigrations`
         - The `makemigrations` command looks at all your available models and creates migrations for whichever tables don’t already exist. `migrate` runs the migrations and creates tables in your database, as well as optionally providing much richer schema control.
         - By running makemigrations, you’re telling Django that you’ve made some changes to your models and that you’d like the changes to be stored as a migration.
