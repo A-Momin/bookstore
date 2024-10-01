@@ -64,8 +64,8 @@ refresh_database(){
     migrate_data;
     # rm -fr /Users/am/mydocs/Software_Development/Web_Development/django-courses/bookstore/media/images/*
     python manage.py createsuperuser --email AMominNJ@gmail.com --user_name admin --noinput;
-    loaddata categories.json;
-    loaddata books.json;
+    # loaddata categories.json;
+    # loaddata books.json;
 }
 
 delete_user(){
