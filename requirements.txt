@@ -35,3 +35,4 @@ wrapt
 django-debug-toolbar
 boto3
 django-storages
+mptt
