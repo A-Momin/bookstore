@@ -32,12 +32,10 @@ SECRET_KEY = 'o2dc5%_gd^m!k5_ot75j-&)z%k9z%3i#-%p2jgfofqgi@$nldl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ROOT_URLCONF = 'core.urls'
 
-ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']
-
-
-# Only `debug_toolbar` specific settings
-INTERNAL_IPS = ['yourdomain.com', '127.0.0.1', 'localhost']
+# ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -69,8 +67,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'core.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -90,7 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

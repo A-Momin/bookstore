@@ -2,7 +2,10 @@ from .base import *
 
 # debug_toolbar settings
 if DEBUG:
-    INTERNAL_IPS = ("127.0.0.1",)
+
+    # Only `debug_toolbar` specific settings
+    INTERNAL_IPS = ("127.0.0.1",'localhost')
+
     MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # Only `debug_toolbar` specific settings
 
 
