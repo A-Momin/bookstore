@@ -82,7 +82,6 @@ git_info(){
     git branch --list
 }
 
-
 add_github_secrets(){
     : ' Adds secrets to the Github
     '

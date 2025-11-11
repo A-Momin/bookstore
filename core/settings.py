@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -22,19 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'o2dc5%_gd^m!k5_ot75j-&)z%k9z%3i#-%p2jgfofqgi@$nldl'
-# The secret key is used for:
-#    All sessions if you are using any other session backend than `django.contrib.sessions.backends.cache`, or are using the default get_session_auth_hash().
-#    All messages if you are using CookieStorage or FallbackStorage.
-#    All PasswordResetView tokens.
-#    Any usage of cryptographic signing, unless a different key is provided.
-
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ROOT_URLCONF = 'core.urls'
 
-# ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']
+# Only `debug_toolbar` specific settings
+INTERNAL_IPS = ['*'] # ['yourdomain.com', '127.0.0.1', 'localhost']
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -46,8 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mptt',
-    # 'storages',
+    'debug_toolbar',
     # 'corsheaders',
     'store',
     'basket',
@@ -61,12 +54,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # If you override that setting, remember that 'django.middleware.csrf.CsrfViewMiddleware' should come before any view middleware that assume that CSRF attacks have been dealt with.
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # Only `debug_toolbar` specific settings
 ]
+
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -87,6 +82,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -132,6 +128,17 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+STATIC_URL = '/static/'
+
+# In addition to using a `static/` directory inside your apps, you can define a list of directories (STATICFILES_DIRS) in your settings file where Django will also look for static files.
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 # Basket session ID
 BASKET_SESSION_ID = 'basket'
 
@@ -161,32 +168,3 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.environ.get('STATIC_ROOT')
-
-# In addition to using a `static/` directory inside your apps, you can define a list of directories (STATICFILES_DIRS) in your settings file where Django will also look for static files.
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-
-MEDIA_URL = '/media/'
-
-
-###############################################################################
-############### Setting specific to staticfiles serving from S3 ###############
-###############################################################################
-## [django-storages docs](https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html)
-# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-# AWS_S3_FILE_OVERWRITE = False
-# AWS_DEFAULT_ACL = None
-# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-# S3_STATIC_DIR="static"
-# STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{S3_STATIC_DIR}"
-
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-###############################################################################

@@ -41,9 +41,7 @@ def stripe_webhook(request):
     event = None
 
     try:
-        event = stripe.Event.construct_from(
-            json.loads(payload), stripe.api_key
-        )
+        event = stripe.Event.construct_from(json.loads(payload), stripe.api_key)
     except ValueError as e:
         print(e)
         return HttpResponse(status=400)

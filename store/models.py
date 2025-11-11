@@ -9,12 +9,7 @@ class Category(MPTTModel):
     Category Table implimented with MPTT.
     """
 
-    name = models.CharField(
-        verbose_name=_("Category Name"),
-        help_text=_("Required and unique"),
-        max_length=255,
-        unique=True,
-    )
+    name = models.CharField(verbose_name=_("Category Name"),help_text=_("Required and unique"),max_length=255,unique=True,)
     slug = models.SlugField(verbose_name=_("Category safe URL"), max_length=255, unique=True)
     parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
     is_active = models.BooleanField(default=True)
@@ -35,8 +30,7 @@ class Category(MPTTModel):
 
 class ProductType(models.Model):
     """
-    ProductType Table will provide a list of the different types
-    of products that are for sale.
+    ProductType Table will provide a list of the different types of products that are for sale.
     """
 
     name = models.CharField(verbose_name=_("Product Name"), help_text=_("Required"), max_length=255, unique=True)
@@ -52,8 +46,7 @@ class ProductType(models.Model):
 
 class ProductSpecification(models.Model):
     """
-    The Product Specification Table contains product
-    specifiction or features for the product types.
+    The Product Specification Table contains product specifiction or features for the product types.
     """
 
     product_type = models.ForeignKey(ProductType, on_delete=models.RESTRICT)
@@ -68,17 +61,11 @@ class ProductSpecification(models.Model):
 
 
 class Product(models.Model):
-    """
-    The Product table contining all product items.
-    """
+    """The Product table contining all product items."""
 
     product_type = models.ForeignKey(ProductType, on_delete=models.RESTRICT)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
-    title = models.CharField(
-        verbose_name=_("title"),
-        help_text=_("Required"),
-        max_length=255,
-    )
+    title = models.CharField(verbose_name=_("title"),help_text=_("Required"),max_length=255,)
     description = models.TextField(verbose_name=_("description"), help_text=_("Not Required"), blank=True)
     slug = models.SlugField(max_length=255)
     regular_price = models.DecimalField(
@@ -125,8 +112,7 @@ class Product(models.Model):
 
 class ProductSpecificationValue(models.Model):
     """
-    The Product Specification Value table holds each of the
-    products individual specification or bespoke features.
+    The Product Specification Value table holds each of the products individual specification or bespoke features.
     """
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -164,7 +150,7 @@ class ProductImage(models.Model):
         null=True,
         blank=True,
     )
-    is_feature = models.BooleanField(default=False)
+    is_feature = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
