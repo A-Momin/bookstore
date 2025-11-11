@@ -3,7 +3,8 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-
+from django.dispatch import Signal, receiver
+from django.db.models.signals import post_save
 
 class CustomAccountManager(BaseUserManager):
 
@@ -16,15 +17,13 @@ class CustomAccountManager(BaseUserManager):
         if other_fields.get('is_staff') is not True:
             raise ValueError('Superuser must be assigned to is_staff=True.')
         if other_fields.get('is_superuser') is not True:
-            raise ValueError(
-                'Superuser must be assigned to is_superuser=True.')
+            raise ValueError('Superuser must be assigned to is_superuser=True.')
 
         return self.create_user(email, user_name, password, **other_fields)
 
     def create_user(self, email, user_name, password, **other_fields):
 
-        if not email:
-            raise ValueError(_('You must provide an email address'))
+        if not email: raise ValueError(_('You must provide an email address'))
 
         email = self.normalize_email(email)
         user = self.model(email=email, user_name=user_name, **other_fields)
@@ -66,3 +65,10 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.user_name
+
+
+def on_user_create_handler(sender, instance, **kwargs):
+    print(f"The user with username - '{instance.user_name}' has just been created")
+    print("=========================="*3)
+
+post_save.connect(on_user_create_handler, sender=UserBase)

@@ -62,10 +62,10 @@ delete_migrations(){
 refresh_database(){
     delete_migrations;
     migrate_data;
-    rm -fr /Users/am/mydocs/Software_Development/Web_Development/django-courses/bookstore/media/images/*
+    # rm -fr /Users/am/mydocs/Software_Development/Web_Development/django-courses/bookstore/media/images/*
     python manage.py createsuperuser --email AMominNJ@gmail.com --user_name admin --noinput;
-    loaddata categories.json;
-    loaddata books.json;
+    # loaddata categories.json;
+    # loaddata books.json;
 }
 
 delete_user(){
@@ -81,7 +81,6 @@ git_info(){
     echo "List of branches created so far:"
     git branch --list
 }
-
 
 add_github_secrets(){
     : ' Adds secrets to the Github

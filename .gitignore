@@ -1,11 +1,17 @@
+#=============================
+conftest.py
+tests
+Dockerfile_goal
+Jenkinsfile_goal
+requirements_main.txt
+#=============================
 logs
 db.sqlite3
 **dotfiles/**
 **tmp/**
 **utils**
 **pvt**
-notes.md
-notes_testing_django.md
+**media/images**
 notes_misc.md
 *rough.md
 *notes.md
@@ -15,6 +21,8 @@ uwsgi_config.ini
 uwsgi_testing.py
 account/fixtures
 account/management
+store/management
+.venv
 #=============================
 #=============================
 **/__pycache__/**
@@ -27,4 +35,5 @@ tmp
 **home.html
 .coverage
 .secrets*
+.gitignore
 # =============================

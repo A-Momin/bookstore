@@ -19,7 +19,7 @@ from orders.views import user_orders
 @login_required
 def dashboard(request):
     orders = user_orders(request)
-    return render(request, "account/user/dashboard.html", {"section": "profile", "orders": orders})
+    return render(request, "account/dashboard/dashboard.html", {"section": "profile", "orders": orders})
 
 
 def account_register(request):
@@ -44,7 +44,7 @@ def account_register(request):
                 'token': account_activation_token.make_token(user),
             })
             user.email_user(subject=subject, message=message)
-            return HttpResponse('registered succesfully and activation sent')
+            return HttpResponse('registered succesfully and activation link has been sent')
     else:
         registerForm = RegistrationForm()
     return render(request, 'account/registration/register.html', {'form': registerForm})
@@ -74,7 +74,7 @@ def edit_details(request):
     else:
         user_form = UserEditForm(instance=request.user)
 
-    return render(request, 'account/user/edit_details.html', {'user_form': user_form})
+    return render(request, 'account/dashboard/edit_details.html', {'user_form': user_form})
 
 
 @login_required
