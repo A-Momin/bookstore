@@ -64,9 +64,9 @@
 
             -   **Activate Django Environment**:
 
-                -   `$ git clone --branch bs-regular --single-branch git@gh1:A-Momin/bookstore.git` → Clone the `bookstore` repository from `Github.com`
+                -   `$ git clone --branch django-with-ecs --single-branch git@gh1:A-Momin/bookstore.git` → Clone the `bookstore` repository from `Github.com`
                 -   `$ cd path/to/bookstore` → Change directory to the Django project.
-                -   `$ git checkout bs-regular` → Checkout the development branch.
+                -   `$ git checkout django-with-ecs` → Checkout the development branch.
                 -   `$ source $UV/django/bin/activate` → Activate `django` environment (assumed `uv`-env have created in `$UV` )
                     -   `$ uae django` → Alternative pre-defined shortcut approch to `activate` the `django` environment
 
@@ -103,7 +103,7 @@
 
         -   **How to run the Application in a Container**
 
-            -   `$ docker build -t 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-django:bs-img .` → `registry/repository:tag`
+            -   `$ docker build -t 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest .` → `registry/repository:tag`
 
             -   **Option-1 (`docker-compose`)**:
 
@@ -113,11 +113,23 @@
 
             -   **Option-2 (`docker run`)**:
 
-                -   `$ docker run -dit --rm --privileged -p 8010:8000 -e STRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" -v $PWD:/bookstore -v /sys/fs/cgroup:/sys/fs/cgroup:ro --name=bs-cont 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-django:bs-img`
+                -   ```sh
+                    docker run -dit --rm --privileged -p 8000:8000 \
+                    -e DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY" \
+                    -e DJANGO_STRIPE_SECRET_KEY="$DJANGO_STRIPE_SECRET_KEY" \
+                    -e DJANGO_STRIPE_ENDPOINT_SECRET="$DJANGO_STRIPE_ENDPOINT_SECRET" \
+                    -e DJANGO_STATIC_ROOT="$DJANGO_STATIC_ROOT" \
+                    -v $PWD:/bookstore \
+                    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+                    --name=bs-cont \
+                    530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest
+                    ```
+
+                -   `$ docker run -dit --rm --privileged -p 8000:8000 -e DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY" -e DJANGO_STRIPE_SECRET_KEY="$DJANGO_STRIPE_SECRET_KEY" -e DJANGO_STRIPE_ENDPOINT_SECRET="$DJANGO_STRIPE_ENDPOINT_SECRET" -e DJANGO_STATIC_ROOT="$DJANGO_STATIC_ROOT" -v $PWD:/bookstore -v /sys/fs/cgroup:/sys/fs/cgroup:ro --name=bs-cont 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest`
 
             -   **Push the Docker Image into AWS ECR**: Use the following steps to authenticate and push an image to your repository. For additional registry authentication methods, including the Amazon ECR credential helper, see Registry Authentication .
-
-                -   `$ docker push 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-django:bs-img`
+                -   `$ aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 530976901147.dkr.ecr.us-east-1.amazonaws.com`
+                -   `$ docker push 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest`
                     → Run the following command to push this image to your newly created AWS repository
 
         </details>
@@ -136,7 +148,7 @@
             -   `$ docker tag bookstore-django:latest 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-django:latest`
                 → After the build completes, tag your image so you can push the image to this repository.
                 → `$ docker tag source_image[:tag] target_image[:tag]` → `docker tag source_image[:tag] ecr_registry/repository[:tag]`
-            -   `$ docker push 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-django:bs-img`
+            -   `$ docker push 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest`
                 → Run the following command to push this image to your newly created AWS repository
 
         </details>

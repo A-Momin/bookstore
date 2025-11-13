@@ -1,10 +1,8 @@
-
-# This image is build upon Debian 11
 FROM python:3.11-slim-bullseye
 
 WORKDIR /bookstore
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 RUN apt-get update
 RUN apt-get -y install sudo systemd curl vim ufw
@@ -22,13 +20,15 @@ COPY . /bookstore/
 
 RUN chown -R Shah:Shah /bookstore
 
+# Expose SSH port
+EXPOSE 22
+
 # NOTE: Replace 'dummy_key' with a sensible placeholder, if your settings allow for it.
 # Defining the placeholder ENV variable in the Dockerfile to get your build working immediately. You should then configure your ECS Task Definition to inject the actual, secret value of STRIPE_SECRET_KEY into the container when it runs.
-ENV STRIPE_SECRET_KEY="DUMMY_SECRET_FOR_COLLECTSTATIC_ONLY"
-
-# Define the required STATIC_ROOT setting
-# This is a temporary container path for collectstatic to target.
-ENV STATIC_ROOT="/tmp/static_collection"
+ENV DJANGO_SECRET_KEY="DUMMY_SECRET_FOR_COLLECTSTATIC_ONLY"
+ENV DJANGO_STRIPE_SECRET_KEY="DUMMY_SECRET_FOR_COLLECTSTATIC_ONLY"
+ENV DJANGO_STRIPE_ENDPOINT_SECRET="DUMMY_SECRET_FOR_COLLECTSTATIC_ONLY"
+ENV DJANGO_STATIC_ROOT="DUMMY_SECRET_FOR_COLLECTSTATIC_ONLY"
 
 USER Shah
 WORKDIR /bookstore

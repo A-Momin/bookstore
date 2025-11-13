@@ -1,7 +1,53 @@
 #!/bin/bash
 
+set -e
+
+# Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+TERRAFORM_DIR="$PROJECT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging function
+log() {
+    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
+}
+
+error() {
+    echo -e "${RED}[ERROR]${NC} $1" >&2
+}
+
+success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+# =============================================================================
+# =============================================================================
+
+create_uv_env(){
+    : 'Create a new Python virtual environment using `uv`.
+
+    Args:
+        ($1): Name of the virtual environment to create.
+    
+    Example:
+        create_uv_env myenv
+    '
+    uv venv $UV/"$1" --python 3.11
+}
+
 djrun(){
-    python manage.py runserver localhost:${1:-8000}
+    python manage.py runserver 0.0.0.0:${1:-8000}
 }
 
 createsuperuser(){
@@ -102,4 +148,54 @@ remove_github_secrets(){
     gh secret remove DOCKER_REPOSITORY
     gh secret remove STRIPE_SECRET_KEY
     gh secret remove STRIPE_PUBLISHABLE_KEY
+}
+
+git_add_commit_push(){
+    : ' Adds, commits, and pushes changes to the Git repository.
+    
+    Args:
+        ($1): Commit message.
+    
+    Example:
+        git_add_commit_push "Updated README"
+    '
+    git add .
+    git commit -m "$1"
+    git push origin $2
+}
+
+# Function to build and push Docker image
+build_and_push_image() {
+    : ' Builds and pushes a Docker image to AWS ECR.
+    '
+    # local version="$1"
+    # local environment="$2"
+    local version="latest"
+    local ecr_repo_url="530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo"
+    local aws_region="us-east-1"
+    local environment="blue"
+
+    log "Building Docker image for version $version..."
+    
+    # Login to ECR
+    aws ecr get-login-password --region "$aws_region" | docker login --username AWS --password-stdin "$ecr_repo_url"
+    
+    # Build image
+    docker build -t "$ecr_repo_url:$version" \
+        --build-arg DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY" \
+        --build-arg DJANGO_STRIPE_SECRET_KEY="$DJANGO_STRIPE_SECRET_KEY" \
+        --build-arg DJANGO_STRIPE_ENDPOINT_SECRET="$DJANGO_STRIPE_ENDPOINT_SECRET" \
+        --build-arg DJANGO_STATIC_ROOT="$DJANGO_STATIC_ROOT" \
+        -f Dockerfile .
+    
+    # docker build -t "$ecr_repo_url:$version" --build-arg DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY" --build-arg DJANGO_STRIPE_SECRET_KEY="$DJANGO_STRIPE_SECRET_KEY" --build-arg DJANGO_STRIPE_ENDPOINT_SECRET="$DJANGO_STRIPE_ENDPOINT_SECRET" --build-arg DJANGO_STATIC_ROOT="$DJANGO_STATIC_ROOT" -f Dockerfile .
+
+    # Tag as latest for the environment
+    docker tag "$ecr_repo_url:$version" "$ecr_repo_url:$environment-latest"
+    
+    # Push images
+    docker push "$ecr_repo_url:$version"
+    docker push "$ecr_repo_url:$environment-latest"
+    
+    success "Docker image built and pushed successfully"
 }

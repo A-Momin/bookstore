@@ -15,13 +15,14 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o2dc5%_gd^m!k5_ot75j-&)z%k9z%3i#-%p2jgfofqgi@$nldl'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # The secret key is used for:
 #    All sessions if you are using any other session backend than `django.contrib.sessions.backends.cache`, or are using the default get_session_auth_hash().
 #    All messages if you are using CookieStorage or FallbackStorage.
@@ -29,13 +30,9 @@ SECRET_KEY = 'o2dc5%_gd^m!k5_ot75j-&)z%k9z%3i#-%p2jgfofqgi@$nldl'
 #    Any usage of cryptographic signing, unless a different key is provided.
 
 
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 ROOT_URLCONF = 'core.urls'
-
-# ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']
-ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -147,18 +144,13 @@ LOGIN_REDIRECT_URL = '/account/dashboard'
 # This parameter is used to specify the URL where the user should be redirected if they try to access a protected resource without being authenticated.
 LOGIN_URL = '/account/login/'
 
-STRIPE_SECRET_KEY = os.environ['STRIPE_SECRET_KEY']
+STRIPE_SECRET_KEY = os.environ['DJANGO_STRIPE_SECRET_KEY']
 
 # It's provided through the Stripe CLI ($ stripe login && stripe listen). This is your webhook signing secret.
-STRIPE_ENDPOINT_SECRET = "whsec_fe3dc49502bce2f522252021dbd2f224f5dbc4944e96f2da9250e2356684f8fb"
+STRIPE_ENDPOINT_SECRET = os.environ['DJANGO_STRIPE_ENDPOINT_SECRET']
 
 # CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://localhost:8010",
-    "http://127.0.0.1:8000",
-    "http://127.0.0.1:8010",
-]
+CORS_ALLOWED_ORIGINS = os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', "").split(",") or ["http://localhost:8000","http://localhost:8010","http://127.0.0.1:8000","http://127.0.0.1:8010"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -166,8 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.environ.get('STATIC_ROOT')
-
+STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT') or os.path.join(BASE_DIR, 'staticfiles')
 # In addition to using a `static/` directory inside your apps, you can define a list of directories (STATICFILES_DIRS) in your settings file where Django will also look for static files.
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 

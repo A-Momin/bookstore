@@ -4,7 +4,7 @@ from .base import *
 if DEBUG:
 
     # Only `debug_toolbar` specific settings
-    INTERNAL_IPS = ("127.0.0.1",'localhost')
+    INTERNAL_IPS = os.environ.get('DJANGO_INTERNAL_IPS', '*').split(',')
 
     MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # Only `debug_toolbar` specific settings
 
