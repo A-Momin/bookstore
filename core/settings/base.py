@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'account',
     'payment',
     'orders',
+    'health',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,11 @@ LOGIN_REDIRECT_URL = '/account/dashboard'
 
 # This parameter is used to specify the URL where the user should be redirected if they try to access a protected resource without being authenticated.
 LOGIN_URL = '/account/login/'
+
+# Health Check related settings
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "Production")
+VERSION = os.environ.get("GIT_COMMIT", "v1.0.0") # Use a version/commit hash
+DJANGO_VERSION = "4.2.0" # Or whatever version you are using
 
 STRIPE_SECRET_KEY = os.environ['DJANGO_STRIPE_SECRET_KEY']
 

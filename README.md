@@ -103,7 +103,8 @@
 
         -   **How to run the Application in a Container**
 
-            -   `$ docker build -t 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest .` → `registry/repository:tag`
+            -   `$ docker build -t 530976901147.dkr.ecr.us-east-1.amazonaws.com/bookstore-ecr-repo:latest .`
+                → `docker build -t registry/repository:tag`
 
             -   **Option-1 (`docker-compose`)**:
 
