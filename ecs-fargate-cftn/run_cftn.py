@@ -9,7 +9,7 @@ REGION = os.environ["AWS_DEFAULT_REGION"]
 cf_client = boto3.client("cloudformation", region_name=REGION)
 
 # Read CloudFormation template from a file
-with open("/Users/am/mydocs/Software_Development/DEDS/aws/ecs/ecs-cftn/ecs-tutorial-template.yaml","r") as ecs_cf_template:
+with open("/Users/am/mydocs/Software_Development/Web_Development/django-courses/bookstore/ecs-fargate-cftn/ecs-django-bs-capacity-provider.yaml","r") as ecs_cf_template:
     template_body = ecs_cf_template.read()
 
 # Define stack name
