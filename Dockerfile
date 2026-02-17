@@ -34,10 +34,10 @@ USER Shah
 WORKDIR /bookstore
 
 
-# 4. RUN collectstatic *during the image build*
-# This command collects the files and, if django-storages is configured,
-# uploads them directly to the S3 bucket.
-RUN python manage.py collectstatic --noinput
+# # 4. RUN collectstatic *during the image build*
+# # This command collects the files and, if django-storages is configured,
+# # uploads them directly to the S3 bucket.
+# RUN python manage.py collectstatic --noinput
 
 
 # 'CMD' is executed from 'WORKDIR'

@@ -19,6 +19,11 @@
 # Navigate to the application directory
 cd /bookstore
 
+# collect static files and migrate
+python manage.py collectstatic --noinput
+python manage.py makemigrations
+python manage.py migrate
+
 # Start the Gunicorn server for the Django application
 gunicorn core.wsgi:application --bind 0.0.0.0:8000
 
